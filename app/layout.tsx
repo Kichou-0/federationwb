@@ -4,7 +4,7 @@ export const metadata: Metadata = {
   title: "WorkProject",
   description: "Gestion de projets collaborative",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/app/favicon.ico",
   },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
