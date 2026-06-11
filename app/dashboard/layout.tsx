@@ -6,23 +6,21 @@ import ThemeProvider from "@/components/ThemeProvider";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [checked, setChecked] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
-    async function check() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { window.location.href = "/login"; return; }
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) { window.location.replace("/login"); return; }
       const { data } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
       setProfile(data);
-      setLoading(false);
-    }
-    check();
+      setChecked(true);
+    });
   }, []);
 
-  if (loading) return (
+  if (!checked) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <p style={{ color: "var(--muted)" }}>Chargement...</p>
+      <p style={{ color: "var(--muted)", fontSize: 14 }}>Chargement...</p>
     </div>
   );
 
