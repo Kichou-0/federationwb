@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
@@ -10,12 +10,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) window.location.href = "/dashboard";
-    });
-  }, []);
-
   async function handleLogin(e: any) {
     e.preventDefault();
     setLoading(true); setError("");
@@ -23,7 +17,7 @@ export default function LoginPage() {
     if (!profile) { setError("Nom d'utilisateur introuvable."); setLoading(false); return; }
     const { error: err } = await supabase.auth.signInWithPassword({ email: profile.email, password });
     if (err) { setError("Mot de passe incorrect."); setLoading(false); return; }
-    window.location.href = "/dashboard";
+    window.location.replace("/dashboard");
   }
 
   return (
