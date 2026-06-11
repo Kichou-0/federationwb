@@ -25,7 +25,7 @@ export default function LoginPage() {
       <div className="card" style={{ padding: 32, width: "100%", maxWidth: 420 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ width: 52, height: 52, borderRadius: 14, background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", fontSize: 26 }}>🗂️</div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>WorkTracker</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>WorkProject</h1>
           <p style={{ color: "var(--muted)", fontSize: 14, marginTop: 4 }}>Connectez-vous à votre espace</p>
         </div>
         <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
