@@ -1,13 +1,31 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+"use client";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import Sidebar from "@/components/Sidebar";
 import ThemeProvider from "@/components/ThemeProvider";
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+
+  useEffect(() => {
+    async function check() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { window.location.href = "/login"; return; }
+      const { data } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
+      setProfile(data);
+      setLoading(false);
+    }
+    check();
+  }, []);
+
+  if (loading) return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "var(--muted)" }}>Chargement...</p>
+    </div>
+  );
+
   return (
     <ThemeProvider profile={profile}>
       <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
