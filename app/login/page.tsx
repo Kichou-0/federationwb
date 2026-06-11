@@ -19,7 +19,7 @@ export default function LoginPage() {
     if (!profile) { setError("Nom d'utilisateur introuvable."); setLoading(false); return; }
     const { error: err } = await supabase.auth.signInWithPassword({ email: profile.email, password });
     if (err) { setError("Mot de passe incorrect."); setLoading(false); return; }
-    router.push("/dashboard"); router.refresh();
+    window.location.href = "/dashboard";
   }
 
   return (
