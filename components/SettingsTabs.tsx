@@ -64,14 +64,7 @@ export default function SettingsTabs({ profile }: { profile: any }) {
   
   setSuccess("Photo mise à jour !");
   setTimeout(() => router.refresh(), 1000);
-}
-  
-  const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
-  await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
-  
-  setSuccess("Photo mise à jour !");
-  setTimeout(() => router.refresh(), 1000);
-}
+}  // ← Cette accolade fermante doit être là
 
   return (
     <div style={{ padding: 32, maxWidth: 640, margin: "0 auto" }}>
