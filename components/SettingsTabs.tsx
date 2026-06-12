@@ -44,15 +44,22 @@ export default function SettingsTabs({ profile }: { profile: any }) {
     setSuccess("Apparence mise à jour !"); setSaving(false);
   }
 
-  async function uploadAvatar(file: File) {
-    const path = `${profile?.id}/avatar.${file.name.split(".").pop()}`;
-    const { error: uploadErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
-    if (!uploadErr) {
-      const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
-      await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", profile?.id);
-      setSuccess("Photo mise à jour !");
-    }
-  }
+  async function uploadAvatar(input) {
+  const file = input.files[0]; if (!file) return;
+  const ext = file.name.split('.').pop();
+  const path = `avatars/${currentUser.id}.${ext}`;
+  
+  const { error: uploadErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+  if (uploadErr) { showSettingsMsg("Erreur : " + uploadErr.message, "error"); return; }
+  
+  const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+  await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", currentUser.id);
+  
+  currentProfile.avatar_url = publicUrl;
+  document.getElementById('settings-avatar').innerHTML = `<img src="${publicUrl}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
+  updateSidebar();
+  showSettingsMsg("Photo mise à jour !", "success");
+}
 
   return (
     <div style={{ padding: 32, maxWidth: 640, margin: "0 auto" }}>
