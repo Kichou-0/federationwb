@@ -56,21 +56,15 @@ export default function SettingsTabs({ profile }: { profile: any }) {
   
   const { error: uploadErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
   if (uploadErr) { 
-    const el = document.getElementById('settings-msg');
-    if (el) { el.className = 'alert-error'; el.textContent = 'Erreur : ' + uploadErr.message; el.classList.remove('hidden'); }
+    setError("Erreur upload : " + uploadErr.message);
     return; 
   }
   
   const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
   await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
   
-  currentProfile.avatar_url = publicUrl;
-  const av = document.getElementById('settings-avatar');
-  if (av) av.innerHTML = `<img src="${publicUrl}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
-  updateSidebar();
-  
-  const el = document.getElementById('settings-msg');
-  if (el) { el.className = 'alert-success'; el.textContent = 'Photo mise à jour !'; el.classList.remove('hidden'); setTimeout(() => el.classList.add('hidden'), 3000); }
+  setSuccess("Photo mise à jour !");
+  setTimeout(() => router.refresh(), 1000);
 }
 
   return (
