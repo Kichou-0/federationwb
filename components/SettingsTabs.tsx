@@ -44,8 +44,7 @@ export default function SettingsTabs({ profile }: { profile: any }) {
     setSuccess("Apparence mise à jour !"); setSaving(false);
   }
 
-  async function uploadAvatar(input: any) {
-  const file = input.files[0]; 
+  async function uploadAvatar(file: File) {
   if (!file) return;
   
   const { data: { user } } = await supabase.auth.getUser();
@@ -59,6 +58,13 @@ export default function SettingsTabs({ profile }: { profile: any }) {
     setError("Erreur upload : " + uploadErr.message);
     return; 
   }
+  
+  const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+  await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
+  
+  setSuccess("Photo mise à jour !");
+  setTimeout(() => router.refresh(), 1000);
+}
   
   const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
   await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
