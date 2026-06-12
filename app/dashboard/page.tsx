@@ -22,11 +22,15 @@ export default function DashboardPage() {
     const { data: mp } = await supabase.from("projects").select("*").eq("owner_id", uid).order("updated_at", { ascending: false }).limit(6);
     setMyProjects(mp ?? []);
     const { data: memberRows } = await supabase.from("project_members").select("role, project_id").eq("user_id", uid).neq("role", "owner").limit(6);
-    if (memberRows?.length) {
-      const ids = memberRows.map((r: any) => r.project_id);
-      const { data: sp } = await supabase.from("projects").select("*").in("id", ids);
-      setSharedProjects((sp ?? []).map((p: any) => ({ ...p, member_role: memberRows.find((r: any) => r.project_id === p.id)?.role })));
-    }
+   if (memberRows && memberRows.length > 0) {
+   const ids = memberRows.map((r: any) => r.project_id);
+   const { data: sp } = await supabase.from("projects").select("*").in("id", ids);
+   if (sp && sp.length > 0) {
+    setSharedProjects(sp.map((p: any) => ({ ...p, member_role: memberRows.find((r: any) => r.project_id === p.id)?.role })));
+   }
+   } else {
+    setSharedProjects([]);
+   }
     const { count: tc } = await supabase.from("tasks").select("*", { count: "exact", head: true }).eq("assigned_to", uid).eq("status", "todo");
     const { count: dc } = await supabase.from("tasks").select("*", { count: "exact", head: true }).eq("assigned_to", uid).eq("status", "done");
     setTodoCount(tc ?? 0);
